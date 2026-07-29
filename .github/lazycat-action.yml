@@ -34,7 +34,7 @@ stores:
     create_if_missing: true
     changelog_locales: [zh, en]
     retry:
-      enabled: false
+      enabled: true
       max_attempts: 3
       initial_delay: 2s
       max_delay: 30s
