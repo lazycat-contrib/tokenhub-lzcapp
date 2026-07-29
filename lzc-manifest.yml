@@ -37,10 +37,10 @@ application:
         - /*
       do:
         - src: file:///lzcapp/pkg/content/lazycat-injects/lzc-file-chooser-inject.js
-
 services:
   tokenhub:
     # ghcr.io/astaxie/tokenhub-backend:0.4.0
+    # upstream: ghcr.io/astaxie/tokenhub-backend:0.4.0
     image: registry.lazycat.cloud/czyt/astaxie/tokenhub-backend:f9db464a930d37f0
     environment:
       - TOKENHUB_ENV=prod
@@ -95,7 +95,6 @@ services:
       start_period: 20s
     cpus: 2
     mem_limit: 2g
-
 usage: |
   打开应用后会使用内置账号 admin 和部署时生成的管理员密码自动登录。
   OpenAI 兼容 API 地址为 https://当前应用域名/v1；SQLite 数据和备份保存在应用持久目录中。
