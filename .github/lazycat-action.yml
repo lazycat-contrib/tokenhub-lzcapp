@@ -1,0 +1,58 @@
+version: 1
+
+project:
+  root: .
+  build_config: lzc-build.yml
+  package_file: package.yml
+  output: dist/application.lpk
+  target_arch: amd64
+
+update:
+  strategy: publish
+  allow_downgrade: false
+  version_source:
+    type: image
+    image: tokenhub
+
+build:
+  toolchains: []
+  run_buildscript: false
+
+images:
+  - id: tokenhub
+    target: service
+    service: tokenhub
+    source: ghcr.io/astaxie/tokenhub-backend
+    channel: stable
+    delivery:
+      mode: lazycat
+
+stores:
+  official:
+    enabled: true
+    skip_if_version_exists: true
+    create_if_missing: true
+    changelog_locales: [zh, en]
+    retry:
+      enabled: false
+      max_attempts: 3
+      initial_delay: 2s
+      max_delay: 30s
+    application:
+      language: zh
+      name: TokenHub
+      brief: "面向企业的私有化 AI 网关与统一模型管理平台。"
+      description: "TokenHub 为普通用户、团队负责人和平台管理员提供分角色工作台，统一管理模型 Provider、路由、API Key、用量、配额、审计与治理策略。"
+      keywords: "AI 网关,大模型,API 管理,模型路由,企业 AI"
+      source: https://github.com/astaxie/TokenHub
+      source_author: astaxie
+      support_pc: true
+      support_mobile: false
+      screenshot_pc_files:
+        - .github/screenshots/overview-en.png
+        - .github/screenshots/providers-en.png
+  private:
+    enabled: true
+    skip_if_version_exists: true
+    name: TokenHub
+    summary: "TokenHub LazyCat package published from GitHub Actions."

@@ -1,0 +1,20 @@
+package: cloud.lazycat.app.tokenhub
+version: 0.4.0
+name: TokenHub
+description: "A private enterprise AI gateway with role-based workspaces for users, team leaders, and administrators."
+author: astaxie
+license: Apache-2.0
+homepage: https://github.com/astaxie/TokenHub
+min_os_version: 1.5.0
+
+permissions:
+  required:
+    - net.internet
+
+locales:
+  zh:
+    name: TokenHub
+    description: "面向企业的私有化 AI 网关，为普通用户、团队负责人和平台管理员提供分角色工作台。"
+  en:
+    name: TokenHub
+    description: "A private enterprise AI gateway with role-based workspaces for users, team leaders, and administrators."

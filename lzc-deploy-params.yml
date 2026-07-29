@@ -1,0 +1,45 @@
+params:
+  - id: admin_password
+    type: secret
+    name: Admin Password
+    description: "Initial password for the built-in admin account (at least 12 characters)."
+    default_value: "$random(len=24)"
+    optional: false
+
+  - id: admin_token
+    type: secret
+    name: Admin API Token
+    description: "Random token used to protect the TokenHub Admin API."
+    default_value: "$random(len=48)"
+    optional: false
+    hidden: true
+
+  - id: secret_key
+    type: secret
+    name: Application Secret Key
+    description: "Stable random key used by TokenHub to protect sensitive data."
+    default_value: "$random(len=48)"
+    optional: false
+    hidden: true
+
+locales:
+  zh:
+    admin_password:
+      name: 管理员密码
+      description: "内置 admin 账号的初始密码（至少 12 个字符）。"
+    admin_token:
+      name: 管理 API Token
+      description: "用于保护 TokenHub 管理 API 的随机令牌。"
+    secret_key:
+      name: 应用密钥
+      description: "TokenHub 用于保护敏感数据的稳定随机密钥。"
+  en:
+    admin_password:
+      name: Admin Password
+      description: "Initial password for the built-in admin account (at least 12 characters)."
+    admin_token:
+      name: Admin API Token
+      description: "Random token used to protect the TokenHub Admin API."
+    secret_key:
+      name: Application Secret Key
+      description: "Stable random key used by TokenHub to protect sensitive data."

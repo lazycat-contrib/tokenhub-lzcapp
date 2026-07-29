@@ -1,0 +1,101 @@
+application:
+  subdomain: tokenhub
+  upstreams:
+    - location: /api/
+      backend: http://tokenhub:8080/api/
+    - location: /v1/
+      backend: http://tokenhub:8080/v1/
+    - location: /healthz
+      backend: http://tokenhub:8080/healthz
+    - location: /readyz
+      backend: http://tokenhub:8080/readyz
+    - location: /livez
+      backend: http://tokenhub:8080/livez
+    - location: /metrics
+      backend: http://tokenhub:8080/metrics
+    - location: /
+      backend: http://tokenhub:3000/
+  public_path:
+    - /
+  injects:
+    - id: tokenhub-login-autofill
+      on: browser
+      when:
+        - /
+      do:
+        - src: builtin://simple-inject-password
+          params:
+            user: admin
+            password: "{{ .U.admin_password }}"
+            userSelector: ".login-card label:first-of-type input"
+            passwordSelector: ".login-card input[type='password']"
+            formSelector: ".login-card"
+            submitSelector: ".login-submit"
+    - id: tokenhub-file-chooser
+      on: browser
+      when:
+        - /*
+      do:
+        - src: file:///lzcapp/pkg/content/lazycat-injects/lzc-file-chooser-inject.js
+
+services:
+  tokenhub:
+    # ghcr.io/astaxie/tokenhub-backend:0.4.0
+    image: registry.lazycat.cloud/czyt/astaxie/tokenhub-backend:f9db464a930d37f0
+    environment:
+      - TOKENHUB_ENV=prod
+      - TOKENHUB_DEPLOYMENT_TYPE=container
+      - TOKENHUB_MANAGED_UPDATES=false
+      - TOKENHUB_INSTALL_ROOT=/opt/tokenhub
+      - TOKENHUB_RUN_MODE=all
+      - TOKENHUB_HTTP_ADDR=:8080
+      - "TOKENHUB_PUBLIC_BASE_URL=https://{{ .S.AppDomain }}"
+      - TOKENHUB_RELEASE_REPOSITORY=astaxie/TokenHub
+      - TOKENHUB_TRUSTED_PROXY_CIDRS=
+      - "TOKENHUB_CORS_ALLOWED_ORIGINS=https://{{ .S.AppDomain }}"
+      - "TOKENHUB_ADMIN_TOKEN={{ .U.admin_token }}"
+      - "TOKENHUB_BOOTSTRAP_ADMIN_PASSWORD={{ .U.admin_password }}"
+      - "TOKENHUB_SECRET_KEY={{ .U.secret_key }}"
+      - TOKENHUB_DATABASE_URL=sqlite:///app/data/tokenhub.db
+      - TOKENHUB_SQLITE_BACKUP_DIR=/app/data/backups
+      - TOKENHUB_MODEL_CATALOG_FILE=/opt/tokenhub/current/catalog/model-catalog.yaml
+      - TOKENHUB_PROVIDER_CATALOG_FILE=/opt/tokenhub/current/catalog/provider-catalog.json
+      - TOKENHUB_SEED_DEMO=false
+      - TOKENHUB_LOG_LEVEL=info
+      - TOKENHUB_RESOURCE_FAILURE_THRESHOLD=3
+      - TOKENHUB_RESOURCE_COOLDOWN_SECONDS=300
+      - TOKENHUB_RESOURCE_COOLDOWN_MAX_SECONDS=3600
+      - TOKENHUB_METRICS_ENABLED=false
+      - TOKENHUB_METRICS_TOKEN=
+      - TOKENHUB_METRICS_PROJECT_LABEL=false
+      - TOKENHUB_IN_FLIGHT_LEASE_TTL_SECONDS=300
+      - TOKENHUB_CLUSTER_LOCK_TTL_SECONDS=180
+      - TOKENHUB_GRACEFUL_SHUTDOWN_SECONDS=150
+      - TOKENHUB_CACHE_AFFINITY_ENABLED=false
+      - TOKENHUB_CACHE_AFFINITY_MODELS=
+      - TOKENHUB_CACHE_AFFINITY_ALLOW_USER_SCOPE=false
+      - TOKENHUB_DB_MAX_OPEN_CONNS=25
+      - TOKENHUB_DB_MAX_IDLE_CONNS=5
+      - TOKENHUB_DB_CONN_MAX_LIFETIME_MINUTES=30
+      - "TOKENHUB_API_BASE_URL=https://{{ .S.AppDomain }}"
+      - TOKENHUB_FRONTEND_HOST=0.0.0.0
+      - TOKENHUB_FRONTEND_PORT=3000
+    binds:
+      - /lzcapp/var/data:/app/data
+      - /lzcapp/var/releases:/opt/tokenhub
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "Promise.all([fetch('http://127.0.0.1:8080/healthz'),fetch('http://127.0.0.1:3000')]).then(rs=>process.exit(rs.every(r=>r.ok)?0:1)).catch(()=>process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    cpus: 2
+    mem_limit: 2g
+
+usage: |
+  打开应用后会使用内置账号 admin 和部署时生成的管理员密码自动登录。
+  OpenAI 兼容 API 地址为 https://当前应用域名/v1；SQLite 数据和备份保存在应用持久目录中。
