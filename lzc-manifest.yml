@@ -40,8 +40,8 @@ application:
 services:
   tokenhub:
     # ghcr.io/astaxie/tokenhub-backend:0.4.0
-    # upstream: ghcr.io/astaxie/tokenhub-backend:0.4.0
-    image: registry.lazycat.cloud/czyt/astaxie/tokenhub-backend:f9db464a930d37f0
+    # upstream: ghcr.io/astaxie/tokenhub-backend:0.5.0
+    image: registry.lazycat.cloud/czyt/astaxie/tokenhub-backend:9bbc5792580513ad
     environment:
       - TOKENHUB_ENV=prod
       - TOKENHUB_DEPLOYMENT_TYPE=container
