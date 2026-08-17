@@ -1,5 +1,5 @@
 package: community.lazycat.app.tokenhub
-version: 0.5.0
+version: 0.6.0
 name: TokenHub
 description: "A private enterprise AI gateway with role-based workspaces for users, team leaders, and administrators."
 author: astaxie
